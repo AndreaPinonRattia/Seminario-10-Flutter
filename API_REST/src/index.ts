@@ -11,7 +11,7 @@ run();
 app.use(cors());
 app.use(express.json() as RequestHandler);
 
-const PORT = 4000;
+const PORT = 3000;
 
 app.get('/ping', (_req , res) => {
     console.log('ping recivido correctamente')

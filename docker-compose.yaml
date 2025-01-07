@@ -1,0 +1,51 @@
+services:
+  backend:
+    build:
+      context: ./API_REST
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./API_REST:/app
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb://mongodb:27017/mydb
+    depends_on:
+      - mongodb
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./FrontEnd_Flutter/flutter_application_1
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./FrontEnd_Flutter/flutter_application_1:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 30s
+      retries: 3
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.runCommand('ping')"]
+      interval: 30s
+      retries: 3
+
+volumes:
+  mongodb_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: C:/data/mongodb
